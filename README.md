@@ -4,28 +4,25 @@ Base Docker image which includes minimal shared libraries for GHC-compiled execu
 
 building the image in docker:
 
+    docker run --privileged -it haskell:7.10 bash
 
-`docker run --privileged -it haskell:7.8 bash`
+inside the container, install the necessary dependencies:
 
-in bash:
+    echo "deb http://ftp.us.debian.org/debian/ sid main contrib non-free" >> /etc/apt/sources.list
+    echo "deb-src http://ftp.us.debian.org/debian/ sid main contrib non-free" >> /etc/apt/sources.list
+    apt-get update
+    apt-get install docker.io git build-essential libpq-dev libssl-dev libghc-crypto-dev ca-certificates
 
-# temporary add sid repository
-echo "deb http://ftp.us.debian.org/debian/ sid main contrib non-free" >> /etc/apt/sources.list
-echo "deb-src http://ftp.us.debian.org/debian/ sid main contrib non-free" >> /etc/apt/sources.list
+clone this repo and build the scratch image:
 
-`apt-get update`
-`apt-get install docker.io git build-essential libpq-dev libssl-dev libghc-crypto-dev ca-certificates`
-`git clone https://github.com/ababkin/haskell-scratch.git`
-`cd haskell-scratch/`
-`/etc/init.d/docker start`
-`make`
-
-
-`docker images`
+    git clone https://github.com/mcschroeder/haskell-scratch.git
+    cd haskell-scratch/
+    /etc/init.d/docker start
+    make
 
 for every version tag appropriately:
 
-docker tag _image_id_hash_ ababkin/haskell-scratch:integer-gmp
-docker tag _image_id_hash_ ababkin/haskell-scratch:integer-simple
-
-`docker push ababkin/haskell-scratch`
+    docker images
+    docker tag <image_id_hash> <target_name>:integer-gmp
+    docker tag <image_id_hash> <target_name>:integer-simple
+    docker push <target_name>
